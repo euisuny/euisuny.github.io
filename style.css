@@ -1,0 +1,43 @@
+.tab { 
+    margin-left: 40px; 
+    margin-right: 40px;}
+
+.photo { 
+    padding: 4px;
+    border: 1px solid #688770;
+}
+
+.profile {
+    padding: 3px;
+    border: 1px solid #688770;
+    margin-right: 50px;
+}
+
+.photo-box {
+    padding: 20px;
+}
+
+.box {
+    border-width: 1px;
+    border-color: #688770;
+    padding: 30px;
+    background-color:white;
+}
+
+
+.footer {
+    text-align: right;
+    margin-top: 10px;
+}
+
+body {
+    font-family: 'Gentium Book Plus', serif;
+    font-size: 14px;
+    margin: auto;
+    align: center;
+}
+
+table { font-size: 14px; }
+td {
+    padding: 10px;
+}
