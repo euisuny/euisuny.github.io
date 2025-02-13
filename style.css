@@ -140,3 +140,33 @@ h1, h2, h3, h4, h5, h6 {
         max-width: 100%; /* Allow main content to take full width on small screens */
     }
 }
+
+/* Science format */
+.tab { 
+    margin-left: 30px; 
+    margin-right: 30px;}
+.photo { 
+    padding: 4px;
+    border: 1px solid #688770;
+}
+.profile {
+    padding: 3px;
+    border: 1px solid #688770;
+    margin-right: 50px;
+}
+.photo-box {
+    padding: 20px;
+}
+.box {
+    border-width: 1px;
+    border-color: #688770;
+    padding: 25px;
+    background-color:white;
+}
+table {
+    font-size: 14px;
+    border-spacing: 0px;
+}
+td {
+    padding: 5px;
+}
