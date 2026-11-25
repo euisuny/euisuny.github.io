@@ -10,6 +10,8 @@
 *{box-sizing:border-box}
 body{margin:0;background:var(--bg);color:var(--ink);font:15px/1.45 "Avenir Next","Segoe UI",system-ui,sans-serif;padding:20px;max-width:1040px;margin-inline:auto}
 h1{font-size:26px;margin:0 0 4px;letter-spacing:-.01em;font-weight:650}
+p.lead.tag{color:var(--ink);font-size:16px;margin-bottom:6px}
+footer{margin-top:28px;padding-top:12px;border-top:1px solid var(--line);color:var(--mute);font-size:13px}
 p.lead{margin:0 0 14px;color:var(--mute);max-width:70ch}
 button,select,input[type=number],input[type=text],textarea{font:inherit;color:var(--ink);background:var(--panel);border:1px solid var(--line);border-radius:6px}
 button{padding:7px 14px;cursor:pointer}
@@ -70,10 +72,8 @@ button.tool[aria-pressed=true]{background:var(--ink);color:var(--bg);border-colo
 </head>
 <body>
 <h1>tiny noise</h1>
-<p class="lead">
-A 16-step sequencer. Fiddle with your own sound recordings and scanned drawings to maximize fun with both analog and digital noise.
-
-<br/><br/>Lanes of beeps, noise and your own recordings. Click cells or type numbers and patterns, draw pictures that become sound, save scenes, and write a score that plays by itself. Drawing mode includes spectrogram-style drawing and noise-based drawing (B/W and color).</p>
+<p class="lead tag">A 16-step sequencer. Fiddle with your own sound recordings and scanned drawings to maximize fun with both analog and digital noise.</p>
+<p class="lead">Lanes of beeps, noise and your own recordings. Click cells or type numbers and patterns, draw pictures that become sound, save scenes, and write a score that plays by itself. Drawing mode includes spectrogram-style drawing and noise-based drawing (B/W and color).</p>
 
 <div class="top">
   <div class="btns"><button class="go" id="go">Start</button><button id="rec">Record</button></div>
@@ -83,7 +83,7 @@ A 16-step sequencer. Fiddle with your own sound recordings and scanned drawings 
 
 <canvas id="vis" aria-label="Combined output of all lanes: waveform line over frequency bars"></canvas>
 
-<details class="panel" open>
+<details class="panel">
   <summary>Spectrogram and drawing</summary>
   <p class="cap">What you hear: time runs left to right (newest on the right, about 8.5 seconds shown), pitch runs bottom to top, brightness is loudness.</p>
   <canvas id="spc" width="512" height="256" aria-label="Scrolling spectrogram of the combined output"></canvas>
@@ -109,7 +109,7 @@ A 16-step sequencer. Fiddle with your own sound recordings and scanned drawings 
   <div class="sl" id="dctl" style="margin-top:10px"></div>
 </details>
 
-<details class="panel" open>
+<details class="panel">
   <summary>Score: scenes and song</summary>
   <div class="row" id="chips" aria-label="Saved scenes"></div>
   <div class="row">
@@ -142,16 +142,18 @@ A 16-step sequencer. Fiddle with your own sound recordings and scanned drawings 
 <div id="lanes"></div>
 <button id="addlane">+ Add lane</button>
 
-<p class="note">Cells cycle off, soft, medium, accent. The text box under each lane takes the same pattern as characters: . off, 1 soft, 2 medium, 3 or x accent. Its length sets Steps in loop (for example "x..x..x." is an 8-step loop). Every slider also has a number box you can type in. Noise and sample "frequency" is playback speed (1000 is normal). Record saves exactly what you hear. Live scan runs on its own, so you can paint and listen without starting the lanes; Start then adds them. Drawings are saved inside the score file, so they come back when you load it. <br/><br/> Disclaimer: this webpage is generated using Claude Code.</p>
+<p class="note">Cells cycle off, soft, medium, accent. The text box under each lane takes the same pattern as characters: . off, 1 soft, 2 medium, 3 or x accent. Its length sets Steps in loop (for example "x..x..x." is an 8-step loop). Every slider also has a number box you can type in. Noise and sample "frequency" is playback speed (1000 is normal). Record saves exactly what you hear. Live scan runs on its own, so you can paint and listen without starting the lanes; Start then adds them. Drawings are saved inside the score file, so they come back when you load it.</p>
+
+<footer>Disclaimer: this webpage is generated using Claude Code.</footer>
 
 <script>
 const KINDS=[['sample','Your sample'],['sine','Sine beep'],['square','Square beep'],['triangle','Triangle beep'],['sawtooth','Saw beep'],['fm','FM bell'],['white','White noise'],['pink','Pink noise'],['brown','Brown noise'],['blue','Blue noise (hiss)'],['crackle','Crackle'],['sh','Stepped noise'],['click','Click']];
 const RATES=[[1,'1/4'],[4/3,'dotted 1/8'],[2,'1/8'],[3,'1/8 triplet'],[4,'1/16'],[6,'1/16 triplet'],[8,'1/32']];
 const FLT=[['none','No filter'],['lowpass','Lowpass'],['highpass','Highpass'],['bandpass','Bandpass'],['notch','Notch']];
 const OSC=['sine','square','triangle','sawtooth'],COLORS=['--a','--b','--c','--d','--e','--f','--g','--h'];
-const LANE_KEYS=['on','kind','freq','len','vol','delay','wander','n','rate','swing','prob','ratchet','shift','human','flt','cut','q','att','sweep','drive','pan','sstart','sscat','whole','sampleName'];
+const LANE_KEYS=['on','kind','freq','len','vol','delay','wander','n','rate','swing','prob','ratchet','shift','human','flt','cut','q','att','sweep','drive','pan','sstart','sscat','whole','follow','sampleName'];
 const GKEYS=['bpm','master','et','ef','em'];
-const defLane=o=>Object.assign({on:true,kind:'sine',freq:1000,len:60,vol:.7,delay:0,wander:0,n:16,steps:Array(16).fill(0),rate:4,swing:0,prob:1,ratchet:1,shift:0,human:0,flt:'none',cut:2000,q:1,att:2,sweep:0,drive:0,pan:0,sstart:0,sscat:0,whole:false,sampleName:'',phase:Math.random()*100,nextT:0,stepN:0},o);
+const defLane=o=>Object.assign({on:true,kind:'sine',freq:1000,len:60,vol:.7,delay:0,wander:0,n:16,steps:Array(16).fill(0),rate:4,swing:0,prob:1,ratchet:1,shift:0,human:0,flt:'none',cut:2000,q:1,att:2,sweep:0,drive:0,pan:0,sstart:0,sscat:0,whole:false,follow:false,sampleName:'',phase:Math.random()*100,nextT:0,stepN:0},o);
 const mk=(kind,freq,len,hits,o={})=>{const s=Array(16).fill(0);hits.forEach(i=>s[i]=3);return defLane(Object.assign({kind,freq,len,steps:s},o))};
 const L=[mk('sine',1000,60,[0,6,10]),mk('white',1000,12,[3,7,11,14],{delay:140,wander:40,flt:'bandpass',cut:3000,q:2}),mk('crackle',1000,80,[0,5,8],{n:12,vol:.5}),mk('brown',400,200,[1,4,11],{flt:'lowpass',cut:600})];
 const G={bpm:96,master:.8,et:300,ef:.4,em:0};
@@ -222,7 +224,10 @@ function buildLane(l,i){
   eb.onclick=()=>{const h=+eh.value;for(let s=0;s<16;s++)l.steps[s]=(s<l.n&&(s*h)%l.n<h)?3:0;paint(i)};
   cl.onclick=()=>{l.steps.fill(0);paint(i)};
   rm.onclick=()=>{L.splice(L.indexOf(l),1);rebuildLanes()};
-  sp.append(eh,eb,cl,rm);
+  const ab=el('button',0,'All steps on/off');ab.title='Switch every step on, or all off if they are all on already';
+  ab.onclick=()=>{const all=l.steps.slice(0,l.n).every(v=>v>0);for(let s=0;s<16;s++)l.steps[s]=all?0:3;paint(i)};
+  const wb=el('button','tool','Whole sound');wb.title='Each lit step plays the entire sample or drawing';wb.setAttribute('aria-pressed',l.whole);
+  sp.append(eh,eb,ab,cl,wb,rm);
   const ks=sel(null,'Sound',KINDS,l,'kind');
   ks.onchange=()=>{l.kind=ks.value;if(l.kind==='sample'&&!l.sampleName){l.sampleName=Object.keys(samples)[0]||'';refreshSampleSelects()}};
   head.append(chk,ks,sel(null,'Rate',RATES,l,'rate',true),sp);
@@ -256,7 +261,10 @@ function buildLane(l,i){
   const sl1=el('label',0,'Your recording');sl1.append(ss);p.append(sl1);
   sl(p,'Sample start point',l,'sstart',0,1,.001,'%',{mult:100});
   sl(p,'Random start scatter',l,'sscat',0,1,.01,'%',{mult:100});
-  const wl=el('label','inl'),wc=el('input');wc.type='checkbox';wc.checked=l.whole;wc.onchange=()=>l.whole=wc.checked;wl.append(wc,'Play the whole sample (ignores Length)');p.append(wl);
+  const wl=el('label','inl'),wc=el('input');wc.type='checkbox';wc.checked=l.whole;wl.append(wc,'Play the whole sample (ignores Length)');p.append(wl);
+  const setWhole=v=>{l.whole=v;wc.checked=v;wb.setAttribute('aria-pressed',v)};wc.onchange=()=>setWhole(wc.checked);wb.onclick=()=>setWhole(!l.whole);
+  const fl3=el('label','inl'),fc=el('input');fc.type='checkbox';fc.checked=l.follow;fc.onchange=()=>l.follow=fc.checked;
+  fl3.append(fc,'Each step plays its own slice (step 1 the start, the last step the end)');p.append(fl3);
   sec.append(head,grid,pat,p);$('#lanes').append(sec);paint(i);
 }
 function rebuildLanes(){
@@ -730,8 +738,8 @@ async function playDrawing(){
 $('#dplay').onclick=playDrawing;
 $('#dlane').onclick=async()=>{
   const n=curDraw;clearTimeout(rtimer);if(!samples[n])await renderDrawing(n);
-  const l=mk('sample',1000,1000,[0],{sampleName:n,whole:true,rate:1});
-  L.push(l);if(ctx){l.nextT=ctx.currentTime+.1;l.stepN=0}rebuildLanes();msg('Added a lane that plays "'+n+'" once per loop. Change its pattern, speed and filters like any lane.');
+  const l=mk('sample',1000,Math.round(60000/G.bpm/4),[...Array(16).keys()],{sampleName:n,follow:true,rate:4,att:3});
+  L.push(l);if(ctx){l.nextT=ctx.currentTime+.1;l.stepN=0}rebuildLanes();msg('Added a lane for "'+n+'": the drawing is cut into one slice per step, and only lit steps sound. Switch steps off to silence parts, or press Whole sound to play it all from each lit step.');
 };
 function buildRowBins(){
   const ny=ctx.sampleRate/2,N=an.frequencyBinCount,r=Math.pow(SFMAX/SFMIN,1/DH);rowBins=[];
@@ -847,7 +855,7 @@ function noiseBuf(t){
   return b;
 }
 function curve(k){if(CUR[k])return CUR[k];const a=new Float32Array(256),g=1+k*40;for(let i=0;i<256;i++)a[i]=Math.tanh(g*(i/127.5-1))/Math.tanh(g);return CUR[k]=a}
-function play(l,when,vel,len){
+function play(l,when,vel,len,idx=0){
   const c=ctx,g=c.createGain(),sw=Math.pow(2,l.sweep/12),pk=l.vol*vel*.5,click=l.kind==='click';
   let src;
   if(OSC.includes(l.kind)||l.kind==='fm'){
@@ -862,7 +870,7 @@ function play(l,when,vel,len){
       const sb=samples[l.sampleName];if(!sb)return;
       const d=sb.duration;src.buffer=sb;
       if(l.whole)len=Math.min(30,d/pr);
-      const off=Math.min(d-.01,Math.max(0,(l.sstart+Math.random()*l.sscat)*d));
+      const off=Math.min(d-.01,Math.max(0,l.follow&&!l.whole?(idx/l.n+Math.random()*l.sscat/l.n)*d:(l.sstart+Math.random()*l.sscat)*d));
       src.playbackRate.setValueAtTime(pr*sw,when);src.playbackRate.exponentialRampToValueAtTime(pr,when+len);
       src.start(when,off);src.stop(when+len+.02);
     }else{
@@ -890,7 +898,7 @@ function sched(limit){
         for(let r=0;lvl&&r<l.ratchet;r++){
           if(Math.random()>l.prob)continue;
           const t=Math.max(ctx.currentTime,base+r*sd/l.ratchet+Math.random()*l.human/1000);
-          play(l,t,[0,.35,.7,1][lvl]*(r?.85:1),l.ratchet>1?Math.min(l.len/1000,sd/l.ratchet*.9):l.len/1000);
+          play(l,t,[0,.35,.7,1][lvl]*(r?.85:1),l.ratchet>1?Math.min(l.len/1000,sd/l.ratchet*.9):l.len/1000,idx);
         }
         cues.push({i,idx,t:Math.max(ctx.currentTime,base)});
       }
