@@ -24,7 +24,9 @@ button:hover{border-color:var(--ink)}
 button.go{background:var(--ink);color:var(--bg);border-color:var(--ink);font-weight:600;min-width:110px}
 button.rec{background:var(--b);color:#fff;border-color:var(--b)}
 .top{display:flex;flex-wrap:wrap;gap:8px 18px;align-items:end;margin-bottom:12px}
-.top .btns{display:flex;gap:8px}
+.top .btns{display:flex;gap:8px;align-items:center;flex-basis:100%;margin-bottom:6px}
+#recfmt{font-size:13px;padding:4px 10px;border:0;border-radius:999px;background:#ececec;color:var(--ink);cursor:pointer}
+#recfmt:disabled{opacity:.5;cursor:default}
 #gctl{display:contents}
 label{display:flex;flex-direction:column;font-size:12.5px;color:var(--mute)}
 .srow{display:flex;gap:6px;align-items:center}
@@ -72,6 +74,7 @@ input.pat{flex:1;min-width:0;font-family:ui-monospace,Menlo,Consolas,monospace;l
 .tipwrap::after{content:attr(data-tip);position:absolute;left:0;top:calc(100% + 6px);z-index:30;width:320px;max-width:80vw;background:var(--ink);color:var(--bg);font-size:12.5px;line-height:1.45;padding:8px 10px;border-radius:6px;white-space:normal;font-weight:400;box-shadow:0 4px 14px rgba(0,0,0,.18);opacity:0;visibility:hidden;pointer-events:none;transition:opacity .15s .45s,visibility 0s .6s}
 .tipwrap:hover::after{opacity:1;visibility:visible;transition:opacity .15s .45s,visibility 0s .45s}
 .tipl::after{left:auto!important;right:0}
+.tipwrap.quick::after,.tipwrap.quick:hover::after{transition-delay:.15s}
 details.manual{margin:0 0 14px}
 details.manual>summary{cursor:pointer;color:var(--mute);font-size:14px}
 details.manual[open]{border:1px solid var(--line);border-radius:6px;padding:8px 14px}
@@ -81,7 +84,8 @@ details.manual[open]{border:1px solid var(--line);border-radius:6px;padding:8px 
 .manual code{font-family:ui-monospace,Menlo,monospace;font-size:13px}
 .sl{display:grid;grid-template-columns:repeat(auto-fit,minmax(210px,1fr));gap:8px 16px}
 .sl label.inl{flex-direction:row;gap:6px;align-items:center}
-#msg{min-height:1.4em;color:var(--mute);font-size:13px;margin:4px 0 8px}
+#msg{position:fixed;left:50%;bottom:18px;transform:translateX(-50%);z-index:50;max-width:min(640px,90vw);background:var(--ink);color:var(--bg);font-size:14px;padding:8px 14px;border-radius:8px;box-shadow:0 4px 16px rgba(0,0,0,.2);transition:opacity .3s}
+#msg:empty{display:none}
 #addlane{margin:2px 0 8px}
 #spc{width:100%;height:200px;display:block;background:#000;border:1px solid var(--line);border-radius:6px;margin:6px 0}
 #cwrap{position:relative;margin:6px 0}
@@ -114,9 +118,9 @@ canvas.strip{width:100%;height:56px;display:block;background:var(--bg);border:1p
 kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;border:1px solid var(--line);border-bottom-width:2px;border-radius:4px;padding:0 4px;background:var(--bg);color:var(--ink)}
 .safe{font-size:12px;color:var(--mute);align-self:center}
 #psave,#popen{background:#e6e6e6;border-color:#d0d0d0;padding:8px 18px;font-size:16px}
-.projrow{display:flex;gap:8px;margin:0 0 10px}
+.projrow{display:flex;gap:8px;margin:18px 0 10px}
 #psave:hover,#popen:hover{border-color:var(--ink)}
-#exbox{background:#f3f3f3;border-radius:8px;padding:8px 12px;margin:0 0 8px}
+#exbox{background:#f3f3f3;border-radius:8px;padding:8px 12px;margin:0 0 6px}
 #exbox>summary{cursor:pointer;font-size:14px;color:var(--mute)}
 #examples{margin-top:6px}
 #dcv{width:100%;height:90px;display:block;background:#fff;border:1px solid var(--line);border-radius:6px;margin:8px 0}
@@ -127,51 +131,62 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;border:1px solid var
 <p class="lead tag">A sound toy. Fiddle with your own sound recordings, data, gestures, and scanned drawings for maximized fun with noise.</p>
 <details class="manual"><summary>Quick manual</summary>
 <h3>Getting started</h3>
-<p>Press <b>Start</b> (or Space) to hear all lanes together. Each lane is one voice: it plays one sound on its own timing. Change a lane while it plays and you hear the change immediately. Most labels have a dotted underline or a hover explanation: point at them to see what they do.</p>
+<p>Open <b>Start from an example</b> and pick one, or work on the lanes that are already there. Press <b>Start</b> (or Space) to hear all lanes together. Each lane is one voice: it plays one sound on its own timing, and any change you make is heard straight away. Labels with a dotted underline, and the menus in each lane's header, explain themselves when you point at them.</p>
+<h3>The top bar</h3>
+<ul>
+<li><b>Start</b> and <b>Record</b>: Record captures exactly what you hear until you press it again, then downloads it as <b>WAV</b> (uncompressed, works everywhere) or <b>MP3</b> (much smaller), chosen in the menu next to it. MP3 needs an internet connection the first time, to load the encoder; without one it falls back to WAV.</li>
+<li><b>Tempo</b>: 10 to 300 beats per minute; type decimals for fine changes.</li>
+<li><b>Master volume</b>: overall level. Most of the slider covers normal levels; type a number for exact values.</li>
+<li><b>Auto level</b> (on by default): slowly evens out the overall loudness, so a dense noise bed and a few sparse clicks end up at a similar volume and you rarely need to touch the volume. Untick it to hear the raw differences.</li>
+<li><b>Safety limiter</b> (on by default): catches sudden loud peaks before they reach your ears and speakers. Unticking it turns the label red; keep the volume low.</li>
+<li><b>Save project (.json)</b> and <b>Open project (.json)</b>: see Saving your work.</li>
+</ul>
 <h3>A lane, from top to bottom</h3>
 <ul>
-<li><b>Header:</b> the on/off box (or keys 1–8), the <b>Sound</b> menu, the <b>Timing</b> menu, the <b>Rate</b> (how long each step is) and the number of <b>steps</b> in its loop. <b>Remove</b> deletes the lane.</li>
-<li><b>Squares:</b> click to cycle off, soft, medium, accent. Squares are grouped by beat, with one bar per row.</li>
-<li><b>Pattern:</b> the same steps as text: <code>.</code> off, <code>1</code> soft, <code>2</code> medium, <code>3</code> or <code>x</code> accent. The number of characters sets the loop length (up to 32).</li>
-<li><b>Tools:</b> <b>Euclid</b> spreads a number of hits evenly; <b>All steps on/off</b>; <b>Clear</b>; <b>Whole sound</b> plays the entire recording or drawing from each lit step; <b>Move off the grid</b> lets you drag single steps earlier or later (or type offsets in percent of a step).</li>
-<li><b>Accents:</b> a second pattern with its own length: <code>&gt;</code> louder, <code>-</code> softer, <code>.</code> unchanged. Because it has its own length, the emphasis moves across the steps: <code>&gt;..</code> over 16 steps lands somewhere new every bar.</li>
-<li><b>Volume</b> and <b>Length</b> are always visible. Everything else is under <b>More settings</b>.</li>
+<li><b>Header:</b> the on/off box (or keys 1–8), the <b>Sound</b> menu, the <b>Timing</b> menu, the <b>Rate</b> (how long each step is, from 2 bars down to 1/32, with triplets, quintuplets and septuplets) and the number of <b>steps</b> in the loop (up to 32). <b>Remove</b> deletes the lane.</li>
+<li><b>Squares:</b> click to cycle off, soft, medium, accent. They are grouped by beat, one bar per row. While playing, a small dot in each square shows where the last hit really landed: centred means exactly on time.</li>
+<li><b>Pattern:</b> the same steps as text: <code>.</code> off, <code>1</code> soft, <code>2</code> medium, <code>3</code> or <code>x</code> accent. The number of characters sets the loop length.</li>
+<li><b>Tools:</b> <b>Euclid</b> spreads a number of hits evenly; <b>All steps on/off</b>; <b>Clear</b>; <b>Whole sound</b> plays the entire recording or drawing from each lit step; <b>Move off the grid</b> lets you drag single steps earlier or later, or type offsets in percent of a step.</li>
+<li><b>Accents:</b> a second pattern with its own length: <code>&gt;</code> louder, <code>-</code> softer, <code>.</code> unchanged. Because its length differs from the loop, the emphasis moves: <code>&gt;..</code> over 16 steps lands somewhere new every bar.</li>
+<li><b>Volume</b> and <b>Length</b> (how long each hit lasts, 1 to 2000 ms) are always visible. Everything else is under <b>More settings</b>.</li>
 </ul>
 <h3>More settings</h3>
-<p>At the top are the main knobs. <b>Rough</b> adds grit and unstable pitch; <b>Dark</b> goes from thin (below 50) to muffled (above 50); <b>Dense</b> skips hits (below 50) or adds quick repeats (above 50); <b>Loose</b> lets hits land early or late (0 is exact); <b>Analog ↔ digital</b> goes from warm and wobbly to crushed and hard. Below them are the detailed controls: frequency or speed, attack, pitch drop, filter, drive, pan, delay and wander, shifting the lane in time, chance, ratchets, rotation, loop length, recording start and scatter, playing backwards, and <b>Moved by another lane</b>, where another lane's hits push one of this lane's knobs.</p>
+<p>At the top are the main knobs: <b>Rough</b> (grit and unstable pitch), <b>Dark</b> (below 50 thinner, above 50 more muffled), <b>Dense</b> (below 50 skips hits, above 50 adds quick repeats), <b>Loose</b> (0 is exact timing; higher lets hits land early or late; this is the only control that randomises timing) and <b>Analog ↔ digital</b> (towards 0 warm, wobbly and with a faint hum while playing; 50 clean; towards 100 crushed and hard). Below them: frequency or playback speed, attack, pitch drop, filter, drive, pan, delay and wander (a slow Bluetooth-like drift), shifting the lane earlier or later, delaying every second step, soft-to-accent contrast, chance, ratchets, rotation, loop length, recording start point and scatter, playing a recording backwards, and <b>Moved by another lane</b>, where another lane's hits briefly push one of this lane's knobs.</p>
 <h3>Timing modes</h3>
 <ul>
 <li><b>Steps:</b> the grid as you set it.</li>
 <li><b>Turing loop:</b> the grid slowly rewrites itself; <i>Change</i> sets how fast.</li>
 <li><b>Evolve:</b> each loop the pattern grows into a new one by a cellular-automaton rule; <i>Reseed</i> starts over.</li>
-<li><b>Rain:</b> hits at random moments, no grid; you set how many per second.</li>
-<li><b>Bounce:</b> a dropped ball: fast, quieter hits as it settles, then it is dropped again.</li>
+<li><b>Rain:</b> hits at random moments with no grid; you set how many per second.</li>
+<li><b>Bounce:</b> a dropped ball: hits get faster and quieter as it settles, then it is dropped again.</li>
 <li><b>Cloud:</b> a continuous texture of tiny grains moving through a sound. With a recording it can stretch time, freeze one moment, or run backwards.</li>
 </ul>
 <h3>Sounds</h3>
-<p>The Sound menu has <b>Beeps</b>, <b>Noise</b> and <b>Library sound</b>. The Library holds built-in <b>Field</b> sounds (synthesized imitations of rain, wind, paper and so on, not real recordings), clean <b>Digital</b> noise, sounds made in the <b>Data</b> panel, <b>your recordings</b> (choose <i>Load your own recording…</i>), your <b>drawings</b>, the <b>microphone</b> and saved <b>loops</b>. Recordings stay on your computer.</p>
-<h3>Panels</h3>
+<p>The Sound menu has <b>Beeps</b>, <b>Noise</b> and <b>Library sound</b>. The Library holds built-in <b>Field</b> sounds (synthesized imitations of rain, wind, water, fire, gravel, paper, radio static, vinyl, tape hiss and a distant city; not real recordings), clean <b>Digital</b> noise (1-bit, velvet, 4-bit, shift-register, glitch), sounds made in the <b>Data</b> panel, <b>your recordings</b>, your <b>drawings</b>, the <b>microphone</b> and saved <b>loops</b>. Choose <i>Load your own recording…</i> in any lane's menu, or drag audio files onto the page; they stay on your computer. Noise sounds are set a little quieter than beeps by default, because noise sounds louder at the same level.</p>
+<h3>Panels (below the lanes)</h3>
 <ul>
-<li><b>Play:</b> the XY pad changes two things at once (all lanes); <b>Mutate</b> nudges everything at random and <b>Undo</b> goes back; <b>Drift</b> lets the knobs wander; <b>Morph</b> slides between two saved scenes; <b>Echo</b>.</li>
-<li><b>Room:</b> the microphone (as a sound, or fed back to the speakers), a looper that wears down a little on each pass, and the camera painting into a drawing.</li>
-<li><b>Data:</b> turns numbers, text or any file into exact clicks, pure tones, noise bursts or raw waveform, with a barcode view. Keep the result as a Library sound or add it as a lane.</li>
-<li><b>Spectrogram and drawing:</b> the top shows what you hear (time left to right, pitch bottom to top). Paint below and it becomes sound, in three ways: <b>Noise inks</b> (colour picks the noise), <b>Texture</b> (grains, no pitch) and <b>Pitch</b> (spectrogram-style). <b>Live scan</b> loops the drawing; press and drag to hear the spot under your pointer.</li>
-<li><b>Score:</b> save the current state as a scene, list scenes with a number of bars to make a song, and play it (and record it).</li>
+<li><b>Play:</b> the XY pad changes two things at once on all lanes (and can spring back); <b>Mutate</b> nudges everything at random and <b>Undo</b> goes back; <b>Drift</b> lets the main knobs wander by themselves; <b>Morph</b> slides between two saved scenes; <b>Echo</b>.</li>
+<li><b>Room:</b> the microphone (as a sound for any lane, or fed back to the speakers), a looper that wears down a little on each pass, and the camera painting into a drawing.</li>
+<li><b>Data:</b> turns numbers, text or any file into exact clicks, pure tones, noise bursts or a raw waveform, with a barcode view. Keep the result as a Library sound or add it as a lane.</li>
+<li><b>Spectrogram and drawing:</b> the top shows what you hear (time left to right, pitch bottom to top). Paint below and it becomes sound in three ways: <b>Noise inks</b> (colour picks the kind of noise), <b>Texture</b> (grains, no pitch) and <b>Pitch</b> (spectrogram style). <b>Live scan</b> loops the drawing; press and drag to hear the spot under your pointer. <b>Add as lane</b> cuts a drawing into one slice per step.</li>
+<li><b>Score:</b> save the current state as a scene, list scenes with a number of bars to make a song, and play it, with or without recording it.</li>
+<li><b>Your recordings:</b> the audio files you have loaded.</li>
 </ul>
 <h3>Saving your work</h3>
-<p><b>Save project</b> (top) downloads one file with everything: the lanes as they are now (patterns included, as readable text), all scenes and the song, drawings, data sounds and your recordings. <b>Open project</b>, or dragging the file onto the page, brings it all back. You can also drag audio files onto the page to load them as recordings. The page also keeps an autosave in this browser; <b>Restore last session</b> appears next to the examples when there is one. <b>Record</b> saves the sound itself as an audio file.</p>
+<p><b>Save project (.json)</b> downloads one .json file with everything: the lanes as they are now (patterns included, as readable text), all scenes and the song, drawings, data sounds and your recordings. <b>Open project (.json)</b>, or dragging the file onto the page, brings it all back. The page also keeps an autosave in this browser every 15 seconds; <b>Restore last session</b> appears inside <i>Start from an example</i> when there is one (recordings are only kept in saved project files). <b>Record</b> saves the sound itself.</p>
 <h3>Keys</h3>
-<p><b>Space</b> start or stop · <b>1–8</b> mute a lane · <b>Q–I</b> hit a lane once · hold <b>S</b> to stutter · <b>M</b> mutate · <b>Z</b> undo.</p>
+<p><b>Space</b> start or stop · <b>1–8</b> mute a lane · <b>Q–I</b> hit a lane once · hold <b>S</b> to stutter · <b>M</b> mutate · <b>Z</b> undo (also after loading an example).</p>
 <h3>Tips</h3>
 <ul>
-<li><b>Slow, minimal and tight:</b> low tempo, a fine rate (1/32, quintuplets), short Length (3–20 ms), few hits placed just off the beat, Loose at 0 (dots centred), Analog ↔ digital above 50.</li>
-<li><b>Syncopation without a groove template:</b> give lanes different loop lengths (5, 7, 11…) or rates, rotate patterns, and use short accent patterns.</li>
-<li><b>Record</b> saves exactly what you hear as an audio file. A safety limiter is always on, but microphone feedback can still get loud: start low.</li>
+<li><b>Slow, minimal and tight:</b> low tempo, a fine rate (1/32, quintuplets), short Length (3–20 ms), few hits placed just off the beat, Loose at 0 (dots centred), Analog ↔ digital above 50. The <i>Slow and tight</i> and <i>Data pulse</i> examples start there.</li>
+<li><b>Syncopation without a groove template:</b> give lanes different loop lengths (5, 7, 11…) or rates, rotate patterns, and use short accent patterns. See the <i>Polymeter</i> example.</li>
+<li><b>Textures:</b> a Library recording in a Cloud lane with low Travel speed gives a slowly moving bed; see <i>Rain room</i> and <i>Calibration</i>.</li>
+<li>Microphone feedback can get loud quickly even with the limiter: start low.</li>
 </ul>
 </details>
 
 <div class="top">
-  <div class="btns"><button class="go" id="go">Start</button><button id="rec">Record</button><span class="tipwrap" data-tip="Downloads one .json file with everything: the lanes as they are now, all scenes and the song, drawings, data sounds and your recordings. Open it later to carry on exactly where you left off."><button id="psave">Save project (.json)</button></span><span class="tipwrap" data-tip="Opens a saved project (.json) file. You can also drag a project file, or any audio file, onto the page."><button id="popen">Open project (.json)</button></span><input type="file" id="pfile" accept=".json,application/json" hidden></div>
+  <div class="btns"><button class="go" id="go">Start</button><span class="tipwrap" data-tip="Records exactly what you hear, until you press it again, then downloads the file. WAV is uncompressed and works everywhere; MP3 is much smaller."><button id="rec">Record (WAV)</button></span><select id="recfmt" aria-label="Recording format"><option value="wav">WAV</option><option value="mp3">MP3</option></select><span class="tipwrap" data-tip="Downloads one .json file with everything: the lanes as they are now, all scenes and the song, drawings, data sounds and your recordings. Open it later to carry on exactly where you left off."><button id="psave">Save project (.json)</button></span><span class="tipwrap" data-tip="Opens a saved project (.json) file. You can also drag a project file, or any audio file, onto the page."><button id="popen">Open project (.json)</button></span><input type="file" id="pfile" accept=".json,application/json" hidden></div>
   <div id="gctl"></div>
 </div>
 <div class="projrow" id="projrow"></div>
@@ -303,7 +318,7 @@ kbd{font-family:ui-monospace,Menlo,monospace;font-size:12px;border:1px solid var
 </details>
 
 
-<footer>This website is generated using Claude Code.</footer>
+<footer>This website is generated with Claude Code.</footer>
 
 <script>
 const KINDS=[['sample','Library sound'],['sine','Sine beep'],['square','Square beep'],['triangle','Triangle beep'],['sawtooth','Saw beep'],['fm','FM bell'],['white','White noise'],['pink','Pink noise'],['brown','Brown noise'],['blue','Blue noise (hiss)'],['crackle','Crackle'],['sh','Stepped noise'],['click','Click']];
@@ -326,7 +341,7 @@ const G={limit:true,autolevel:true,bpm:72,swR:.5,swOn:'8',lay:0,master:.6,noise:
 let levLast=0,lev=null,preAn=null,levE=0,levP=0,mfx=null,lim=null,post=null,masterRing=null,modOK=false,an,ctx=null,timer=null,bufs={},cues=[],cur=[],cells=[],pats=[],sampleSels=[],bus,out,dl,fb,wet,recDest,rec=null,CUR={};
 let samples={},scenes={},song=null,pendingSong=null,ending=false,endTimer=null;
 const $=s=>document.querySelector(s),el=(t,c,x)=>{const e=document.createElement(t);if(c)e.className=c;if(x!=null)e.textContent=x;return e};
-const msg=t=>$('#msg').textContent=t;
+let msgT=null;const msg=t=>{$('#msg').textContent=t;clearTimeout(msgT);msgT=setTimeout(()=>{$('#msg').textContent=''},6000)};
 
 const TIPS={"Moved by another lane": "Pick another lane: every time it plays, it briefly pushes one of this lane's knobs (chosen below).","Volume": "How loud this lane is. The slider is finer at the quiet end; type a number (for example 3 or 0.5) for very quiet lanes. Untick the lane to silence it.", "Noise level": "Turns every noise sound up or down at once: the noise types and the Field and Digital library sounds. Beeps, your recordings and drawings are not affected.", "Length": "How long each hit lasts, in milliseconds. Short values (1–20 ms) give clicks and sharp, precise hits; long values give swells and washes.", "Grain length": "How long each little grain of a Cloud lane lasts. Longer grains overlap into a smooth texture; short ones sound grainy.", "Rough": "Adds grit: distortion and a slightly unstable pitch or speed on each hit. It does not change timing (that is Loose).", "Dark (50 neutral)": "Tone colour. Below 50 the sound gets thinner (low end removed); above 50 it gets darker and more muffled (high end removed).", "Dense (50 neutral)": "How busy the lane is. Below 50 some hits are skipped; above 50 extra quick repeats are added. Rain and Cloud lanes get fewer or more events.", "Loose (0 = exact timing)": "0 puts every hit exactly where it belongs. Turning it up lets hits land randomly early or late, up to 30 ms either way. While playing, the dot in each square shows where the last hit landed: centred means exact.", "Analog ↔ digital (50 clean)": "Character of this lane. Towards 0: warm saturation, tape-like wobble, softer attacks, a faint hum while it plays. 50: clean. Towards 100: crushed to fewer bits and a lower sample rate, hard edges.", "Frequency (noise and samples: speed, 1000 = normal)": "For beeps, the pitch in Hz. For noise, recordings and drawings, the playback speed: 1000 is normal, 500 half speed (lower, slower), 2000 double.", "Attack": "How quickly each hit fades in. 1 ms is a sharp click; longer values soften the start.", "Pitch drop (start higher by)": "Each hit starts this many semitones higher (or lower, if negative) and slides to its normal pitch or speed during the hit.", "Filter": "An extra filter on this lane: Lowpass keeps lows, Highpass keeps highs, Bandpass keeps a band, Notch removes a band. Set it with Cutoff and Resonance.", "Cutoff": "Where the filter acts, in Hz.", "Resonance": "How sharp the filter is. High values make it ring at the cutoff.", "Drive": "Fixed distortion on every hit, on top of what Rough adds.", "Pan (-100 left, +100 right)": "Position between the left and right speaker.", "Delay": "Plays every hit of this lane later by this many milliseconds.", "Wander": "Makes the Delay drift slowly up and down by up to this many milliseconds, like two Bluetooth speakers slowly going in and out of sync.", "Shift this lane (minus = earlier)": "Moves the whole lane a fixed amount earlier or later, in milliseconds. Useful for making one lane sit just ahead of or behind the others.", "Delay every second step": "Pushes every second step later by a percentage of a step. 33 gives a triplet-like lilt.", "Soft-to-accent contrast": "How much quieter soft (1) and medium (2) steps are than accents (3). 0: all the same; 100: soft steps are almost silent.", "Chance to play": "The probability that each lit step actually sounds. Below 100 the pattern starts dropping hits at random.", "Ratchet (hits per step)": "Splits each lit step into this many quick repeats.", "Rotate pattern": "Shifts the whole pattern this many steps later, so it starts somewhere else relative to the beat.", "Steps in loop": "How many steps this lane has before it repeats (also the box next to the rate). Lanes with different lengths drift against each other.", "Sample start point": "Where in the recording each hit starts, as a percentage of its length.", "Random start scatter": "Each hit starts somewhere random around the start point. Higher values pick from more of the recording.", "When that lane plays, it moves": "Which knob of this lane the other lane pushes when it plays.", "By how much (negative = the opposite way)": "How strongly the other lane pushes it. Negative values push the knob the other way.", "Change (0 locked loop, 100 always new)": "Turing loop: how likely each step is to flip on or off as it plays. Low values keep a recognisable loop that slowly mutates.", "Rain (hits per second, at random moments)": "Average number of hits per second, at random times with no grid.", "Drop time": "How long the first fall of the ball takes. Each bounce after that is shorter.", "Bounciness": "How much of its height the ball keeps on each bounce. High values bounce for longer.", "Rest between drops": "Silence after the ball comes to rest before it is dropped again.", "Travel speed (100 real time, 0 frozen, below 0 backwards)": "How fast the Cloud moves through the sound: 100 is normal speed, 10 is ten times slower, 0 freezes one moment, negative goes backwards.", "Tempo": "Beats per minute, from 10 to 300. Type decimals for fine changes.", "Master volume": "Overall volume, before the safety limiter. Finer at the quiet end.", "Mutation size": "How big the changes are when you press Mutate (or M).", "Drift amount": "How far the main knobs, pan and pitch wander by themselves over time.", "Drift speed": "How quickly that wandering moves.", "Morph (0 = From, 100 = To)": "Slides every setting between the From scene and the To scene. Patterns switch halfway.", "Echo time": "Time between echoes.", "Echo feedback": "How many echoes follow (higher = longer tail).", "Echo amount": "How loud the echoes are. 0 turns echo off.", "Room → speakers (feedback)": "Sends the microphone straight back out of the speakers. Even small amounts can howl; start low.", "Wear per pass": "How much the loop degrades on each pass: dulling, wobble, noise and dropouts.", "Overdub (new sound also goes into the loop)": "Mixes what you are playing now into the next pass of the loop.", "Loop volume": "Volume of the looper.", "Contrast": "Camera image contrast before it becomes sound.", "Brightness": "Camera image brightness before it becomes sound.", "Frames per second": "How often the camera repaints the drawing."};
 const lblNode=s=>{if(!TIPS[s])return document.createTextNode(s);const h=el('span','hint',s);h.dataset.tip=TIPS[s];return h};
@@ -368,16 +383,28 @@ function laneIn(l){
 }
 function dropLane(l){try{if(l._fx&&l._ctx===ctx)l._fx.node.disconnect()}catch(e){}l._fx=null;l._in=null}
 function applyFx(){L.forEach(laneFx)}
-const LEV_T=.0042,levBuf=new Float32Array(2048);
-setInterval(()=>{
-  if(!ctx||!lev||!preAn)return;
+/* loudness (ITU-R BS.1770 style: K-weighting, 400 ms blocks, absolute and relative gating) */
+function Loud(n){const b=[];const lu=v=>-.691+10*Math.log10(v+1e-15);
+  return{push(ms){b.push(ms);if(b.length>n)b.shift()},clear(){b.length=0},
+    gated(){const z=[];for(let i=3;i<b.length;i++)z.push((b[i]+b[i-1]+b[i-2]+b[i-3])/4);
+      const a=z.filter(v=>lu(v)>-70);if(!a.length)return-Infinity;const m=a.reduce((x,y)=>x+y,0)/a.length,rg=lu(m)-10;
+      const g=a.filter(v=>lu(v)>rg);return lu(g.reduce((x,y)=>x+y,0)/g.length)}}}
+function makeMeter(src,cb){
+  const sink=ctx.createGain();sink.gain.value=0;sink.connect(ctx.destination);let n;
+  if(modOK){try{n=new AudioWorkletNode(ctx,'drift-meter',{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});n.port.onmessage=e=>cb(e.data)}catch(e){n=null}}
+  if(!n){const core=meterCore(ctx.sampleRate,cb);n=ctx.createScriptProcessor(1024,2,1);n.onaudioprocess=e=>{const I=e.inputBuffer,a=I.getChannelData(0);core.process(a,I.numberOfChannels>1?I.getChannelData(1):a)}}
+  src.connect(n);n.connect(sink);return n;
+}
+const LEV_TARGET=-40,levLoud=Loud(120);let levSil=0;
+function levUpdate(d){
+  if(!ctx||!lev)return;
   if(!G.autolevel){lev.gain.setTargetAtTime(1,ctx.currentTime,.3);return}
-  preAn.getFloatTimeDomainData(levBuf);let s=0,m=0;for(const v of levBuf){s+=v*v;const a=Math.abs(v);if(a>m)m=a}s/=levBuf.length;
-  const nw=performance.now();if(s>1e-9)levLast=nw;else if(nw-levLast>3000)return;
-  levE=levE*.97+s*.03;levP=Math.max(m,levP*.97);
-  let g=Math.min(3,Math.max(.3,LEV_T/Math.sqrt(levE)));g=Math.min(g,.28/(levP+1e-6));
-  lev.gain.setTargetAtTime(g,ctx.currentTime,1.5);
-},100);
+  if(d.pk<1e-5){if(++levSil>30)return}else levSil=0;
+  levLoud.push(d.ms);levP=Math.max(d.pk,levP*.97);
+  const Lg=levLoud.gated();if(!isFinite(Lg))return;
+  let g=Math.pow(10,Math.max(-18,Math.min(18,LEV_TARGET-Lg))/20);g=Math.min(g,.9/(levP+1e-6));
+  lev.gain.setTargetAtTime(g,ctx.currentTime,1);
+}
 function applyLimiter(){if(!ctx||!mfx)return;try{mfx.node.disconnect()}catch(e){}mfx.node.connect(G.limit?lim:post)}
 function applyAudioGlobals(){if(!ctx)return;out.gain.value=G.master;dl.delayTime.value=G.et/1000;fb.gain.value=G.ef;wet.gain.value=G.em;applyFx()}
 function buildTop(){
@@ -490,17 +517,28 @@ function buildLane(l,i){
     const AH='Accents: a second, shorter pattern with its own length that cycles over the steps. > makes a step louder, - softer, . leaves it as is. Example: >.. over 16 steps accents steps 1, 4, 7, 10, 13, 16, then 3, 6… so the emphasis moves every bar. Leave it empty for no accents.';
     acc.title=AH;const al=el('span','hint','Accents');al.dataset.tip=AH;al.tabIndex=0;
     eh.title='Number of hits for Euclid: spreads this many hits as evenly as possible over the loop';eb.title=eh.title;
-    tools.append(eh,eb,ab,cl,wb,te,al,acc);
+    const tip=(node,txt)=>{const w=el('span','tipwrap quick');w.dataset.tip=txt;w.append(node);return w};
+    eh.removeAttribute('title');eb.removeAttribute('title');wb.removeAttribute('title');te.removeAttribute('title');
+    tools.append(
+      tip(eh,'How many hits Euclid should place.'),
+      tip(eb,'Euclid: spreads the number of hits on the left as evenly as possible over the loop (for example 3 hits in 8 steps gives x..x..x.). Many traditional rhythms are made this way.'),
+      tip(ab,'Switches every step on (as accents), or all off if they are all on already.'),
+      tip(cl,'Switches every step off.'),
+      tip(wb,'Whole sound: each lit step plays the entire recording or drawing instead of a short hit (ignores Length).'),
+      tip(te,'Move off the grid: drag squares left (earlier) or right (later), or type exact offsets in percent of a step. Double-click a square to put it back on the grid.'));
+    acc.style.width='';acc.style.flex='1';acc.classList.add('pat');acc.style.letterSpacing='.14em';
     if(l.timing==='evolve'){const rs=sel(null,'Rule',RULES,l,'rule',true);const rb=el('button',0,'Reseed');rb.onclick=()=>{for(let s=0;s<MAXS;s++)l.steps[s]=s<l.n&&Math.random()<.35?3:0;paint(i)};tools.append(rs,rb)}
     const PH='The steps of this loop, one character per square: . off, 1 soft, 2 medium, 3 or x accent. Typing here changes the squares (and clicking a square changes this text). The number of characters sets how many steps the loop has, up to 32.';
     pat.title=PH;const pr=el('div','patrow'),pl=el('span','hint','Pattern');pl.dataset.tip=PH;pl.tabIndex=0;pr.append(pl,pat);
-    sec.append(grid,pr,tools);
+    const ar=el('div','patrow');ar.append(al,acc);
+    sec.append(grid,pr,ar,tools);
     l._tim=null;
     if(l._tedit){
       const tw=el('div','tools'),tim=el('input','tim');tim.type='text';tim.spellcheck=false;tim.setAttribute('aria-label','Step timing in percent of a step');
       tim.oninput=()=>{const v=tim.value.trim().split(/[\s,]+/);for(let s=0;s<MAXS;s++){const x=parseFloat(v[s]);l.nudge[s]=s<v.length&&!isNaN(x)?Math.max(-50,Math.min(50,x))/100:0}paint(i)};
       l._tim=tim;
-      const fb=(lab,f)=>{const b=el('button',0,lab);b.onclick=()=>{for(let s=0;s<MAXS;s++)l.nudge[s]=Math.max(-.5,Math.min(.5,Math.round(f(s)*100)/100));paint(i)};return b};
+      const FT={'All back on the grid':'Puts every step back exactly on the grid.','Scatter a little':'Moves every step a small random amount earlier or later (up to 15% of a step). Press again for a new scatter.','Scatter a lot':'Moves every step a large random amount earlier or later (up to 45% of a step).'};
+      const fb=(lab,f)=>{const b=el('button',0,lab);setTimeout(()=>{const w=el('span','tipwrap quick');w.dataset.tip=FT[lab]||'';b.replaceWith(w);w.append(b)});b.onclick=()=>{for(let s=0;s<MAXS;s++)l.nudge[s]=Math.max(-.5,Math.min(.5,Math.round(f(s)*100)/100));paint(i)};return b};
       tw.append(el('span','cap','Offset of each step, % of a step (minus = earlier):'),
         fb('All back on the grid',()=>0),fb('Scatter a little',()=>(Math.random()*2-1)*.15),fb('Scatter a lot',()=>(Math.random()*2-1)*.45));
       sec.append(tim,tw);
@@ -807,6 +845,17 @@ function driftCore(sr,post){
     }
   };
 }
+function meterCore(sr,post){
+  const bq=(hs,f0,Q,gain)=>{const A=Math.pow(10,gain/40),w=2*Math.PI*f0/sr,c=Math.cos(w),s=Math.sin(w),al=s/(2*Q);let b0,b1,b2,a0,a1,a2;
+    if(hs){const r=2*Math.sqrt(A)*al;b0=A*((A+1)+(A-1)*c+r);b1=-2*A*((A-1)+(A+1)*c);b2=A*((A+1)+(A-1)*c-r);a0=(A+1)-(A-1)*c+r;a1=2*((A-1)-(A+1)*c);a2=(A+1)-(A-1)*c-r}
+    else{b0=(1+c)/2;b1=-(1+c);b2=(1+c)/2;a0=1+al;a1=-2*c;a2=1-al}
+    return[b0/a0,b1/a0,b2/a0,a1/a0,a2/a0]};
+  const H=bq(1,1681.97,.7072,3.9998),P=bq(0,38.135,.5003,0),S=[0,1,2,3].map(()=>new Float64Array(4));
+  const run=(c,s,x)=>{const y=c[0]*x+c[1]*s[0]+c[2]*s[1]-c[3]*s[2]-c[4]*s[3];s[1]=s[0];s[0]=x;s[3]=s[2];s[2]=y;return y};
+  let acc=0,cnt=0,pk=0;const B=Math.round(sr*.1);
+  return{process(L,R){for(let i=0;i<L.length;i++){const a=run(P,S[1],run(H,S[0],L[i])),b=run(P,S[3],run(H,S[2],R[i]));acc+=a*a+b*b;
+    const m=Math.max(Math.abs(L[i]),Math.abs(R[i]));if(m>pk)pk=m;if(++cnt>=B){post({ms:acc/cnt,pk});acc=0;cnt=0;pk=0}}}};
+}
 function fxCore(sr){
   let ev=0,a=0,d=0,t=0,wi=0,lpL=0,lpR=0,hc=0,hL=0,hR=0;const wl=new Float32Array(4096),wr=new Float32Array(4096),T=6.283185307179586;
   return{
@@ -833,7 +882,7 @@ function fxCore(sr){
     }
   };
 }
-const LIVE_SRC='const driftCore='+driftCore.toString()+';const fxCore='+fxCore.toString()+';class FX extends AudioWorkletProcessor{constructor(){super();this.c=fxCore(sampleRate);this.port.onmessage=e=>this.c.msg(e.data);this.z=new Float32Array(128)}process(i,o){const a=i[0]||[],b=o[0],L=a[0]||this.z,R=a[1]||L;this.c.process(L,R,b[0],b[1]||b[0]);return true}}registerProcessor("drift-fx",FX);class CAP extends AudioWorkletProcessor{constructor(){super();this.b=new Float32Array(2048);this.k=0}process(i){const a=i[0];if(a&&a[0]){const L=a[0],R=a[1]||L;for(let j=0;j<L.length;j++){this.b[this.k++]=(L[j]+R[j])*.5;if(this.k===2048){this.port.postMessage(this.b);this.b=new Float32Array(2048);this.k=0}}}return true}}registerProcessor("drift-cap",CAP);class P extends AudioWorkletProcessor{constructor(){super();this.c=driftCore(sampleRate,m=>this.port.postMessage(m));this.port.onmessage=e=>this.c.msg(e.data)}process(i,o){const c=o[0];this.c.process(c[0],c[1]||c[0]);return true}}registerProcessor("drift-live",P);';
+const LIVE_SRC='const driftCore='+driftCore.toString()+';const fxCore='+fxCore.toString()+';const meterCore='+meterCore.toString()+';class MET extends AudioWorkletProcessor{constructor(){super();this.c=meterCore(sampleRate,m=>this.port.postMessage(m));this.z=new Float32Array(128)}process(i){const a=i[0]||[],L=a[0]||this.z,R=a[1]||L;this.c.process(L,R);return true}}registerProcessor("drift-meter",MET);class FX extends AudioWorkletProcessor{constructor(){super();this.c=fxCore(sampleRate);this.port.onmessage=e=>this.c.msg(e.data);this.z=new Float32Array(128)}process(i,o){const a=i[0]||[],b=o[0],L=a[0]||this.z,R=a[1]||L;this.c.process(L,R,b[0],b[1]||b[0]);return true}}registerProcessor("drift-fx",FX);class CAP extends AudioWorkletProcessor{constructor(){super();this.b=new Float32Array(2048);this.k=0}process(i){const a=i[0];if(a&&a[0]){const L=a[0],R=a[1]||L;for(let j=0;j<L.length;j++){this.b[this.k++]=(L[j]+R[j])*.5;if(this.k===2048){this.port.postMessage(this.b);this.b=new Float32Array(2048);this.k=0}}}return true}}registerProcessor("drift-cap",CAP);class REC extends AudioWorkletProcessor{constructor(){super();this.n=0;this.l=new Int16Array(4096);this.r=new Int16Array(4096);this.port.onmessage=()=>{this.port.postMessage([this.l.slice(0,this.n),this.r.slice(0,this.n),1]);this.n=0}}process(i){const a=i[0];if(a&&a[0]){const L=a[0],R=a[1]||L;for(let j=0;j<L.length;j++){const x=Math.max(-1,Math.min(1,L[j])),y=Math.max(-1,Math.min(1,R[j]));this.l[this.n]=x<0?x*32768:x*32767;this.r[this.n]=y<0?y*32768:y*32767;if(++this.n===4096){this.port.postMessage([this.l,this.r,0]);this.l=new Int16Array(4096);this.r=new Int16Array(4096);this.n=0}}}return true}}registerProcessor("drift-rec",REC);class P extends AudioWorkletProcessor{constructor(){super();this.c=driftCore(sampleRate,m=>this.port.postMessage(m));this.port.onmessage=e=>this.c.msg(e.data)}process(i,o){const c=o[0];this.c.process(c[0],c[1]||c[0]);return true}}registerProcessor("drift-live",P);';
 const LB=96,LV={vol:.5};
 let live=null,liveOn=false,holding={on:false,x:0},starting=false,lastOx=-1;
 const ovCol=sx.createImageData(1,DH);
@@ -1399,12 +1448,13 @@ async function start(preview){
   dl=ctx.createDelay(2);fb=ctx.createGain();wet=ctx.createGain();
   const elp=ctx.createBiquadFilter();elp.type='lowpass';elp.frequency.value=4000;
   bus.connect(out);bus.connect(dl);dl.connect(elp);elp.connect(fb);fb.connect(dl);elp.connect(wet);wet.connect(out);
-  mfx=makeFx();lev=ctx.createGain();preAn=ctx.createAnalyser();preAn.fftSize=2048;out.connect(preAn);out.connect(lev);lev.connect(mfx.node);levE=.0042*.0042;levP=.1;
+  mfx=makeFx();lev=ctx.createGain();out.connect(lev);lev.connect(mfx.node);levP=.1;levLoud.clear();levSil=0;
   lim=ctx.createDynamicsCompressor();lim.threshold.value=-6;lim.knee.value=0;lim.ratio.value=20;lim.attack.value=.002;lim.release.value=.2;
   post=ctx.createGain();post.gain.value=.95;mfx.node.connect(G.limit?lim:post);lim.connect(post);
   an=ctx.createAnalyser();an.fftSize=2048;an.smoothingTimeConstant=.6;an.minDecibels=-90;an.maxDecibels=-25;post.connect(an);Fs=new Uint8Array(an.frequencyBinCount);buildRowBins();
   recDest=ctx.createMediaStreamDestination();post.connect(ctx.destination);post.connect(recDest);
   masterRing=new Ring(ctx.sampleRate*20);post.connect(makeCap(masterRing));
+  makeMeter(out,levUpdate);
   applyAudioGlobals();
   await ctx.resume();
   await initLive();
@@ -1425,13 +1475,47 @@ function stop(){
   cells.forEach((r,i)=>{if(cur[i]>=0&&r[cur[i]])r[cur[i]].classList.remove('now');cur[i]=-1});
 }
 $('#go').onclick=()=>{if(!ctx)start();else if(!timer)startSeq();else stop()};
+const fmtName=()=>$('#recfmt').value.toUpperCase();
+function recLabel(){$('#rec').textContent=rec?'Stop and save ('+fmtName()+')':'Record ('+fmtName()+')'}
+$('#recfmt').onchange=recLabel;
 function startRec(){
-  const ch=[];rec=new MediaRecorder(recDest.stream);
-  rec.ondataavailable=e=>ch.push(e.data);
-  rec.onstop=()=>{const blob=new Blob(ch,{type:rec.mimeType}),a=el('a');a.href=URL.createObjectURL(blob);a.download='drift-'+Date.now()+'.'+(rec.mimeType.includes('ogg')?'ogg':'webm');a.click();rec=null;$('#rec').textContent='Record';$('#rec').classList.remove('rec')};
-  rec.start();$('#rec').textContent='Stop and save';$('#rec').classList.add('rec');
+  if(!ctx||rec)return;
+  const L=[],R=[],sr=ctx.sampleRate,sink=ctx.createGain();sink.gain.value=0;sink.connect(ctx.destination);
+  let node;
+  if(modOK){try{node=new AudioWorkletNode(ctx,'drift-rec',{numberOfInputs:1,numberOfOutputs:1,outputChannelCount:[1]});node.port.onmessage=e=>{L.push(e.data[0]);R.push(e.data[1]);if(e.data[2]&&rec&&rec.flushed)rec.flushed()}}catch(e){node=null}}
+  if(!node){node=ctx.createScriptProcessor(4096,2,1);const q=v=>{const o=new Int16Array(v.length);for(let k=0;k<v.length;k++){const x=Math.max(-1,Math.min(1,v[k]));o[k]=x<0?x*32768:x*32767}return o};
+    node.onaudioprocess=e=>{const I=e.inputBuffer,a=I.getChannelData(0);L.push(q(a));R.push(q(I.numberOfChannels>1?I.getChannelData(1):a))}}
+  post.connect(node);node.connect(sink);
+  rec={node,sink,L,R,sr,fmt:$('#recfmt').value};$('#recfmt').disabled=true;recLabel();$('#rec').classList.add('rec');
 }
-function stopRec(){if(rec&&rec.state!=='inactive')rec.stop()}
+const joinI16=a=>{let n=0;a.forEach(x=>n+=x.length);const o=new Int16Array(n);let p=0;a.forEach(x=>{o.set(x,p);p+=x.length});return o};
+function wavBlob(L,R,sr){
+  const n=L.length,d=new DataView(new ArrayBuffer(44+n*4)),w=(o,s)=>{for(let i=0;i<s.length;i++)d.setUint8(o+i,s.charCodeAt(i))};
+  w(0,'RIFF');d.setUint32(4,36+n*4,true);w(8,'WAVE');w(12,'fmt ');d.setUint32(16,16,true);d.setUint16(20,1,true);d.setUint16(22,2,true);
+  d.setUint32(24,sr,true);d.setUint32(28,sr*4,true);d.setUint16(32,4,true);d.setUint16(34,16,true);w(36,'data');d.setUint32(40,n*4,true);
+  for(let i=0,o=44;i<n;i++,o+=4){d.setInt16(o,L[i],true);d.setInt16(o+2,R[i],true)}
+  return new Blob([d.buffer],{type:'audio/wav'});
+}
+function loadLame(){if(window.lamejs)return Promise.resolve(true);return new Promise(res=>{const s=document.createElement('script');s.src='https://cdnjs.cloudflare.com/ajax/libs/lamejs/1.2.1/lame.min.js';s.onload=()=>res(!!window.lamejs);s.onerror=()=>res(false);document.head.append(s)})}
+async function mp3Blob(L,R,sr){
+  const enc=new lamejs.Mp3Encoder(2,sr,192),out=[];
+  for(let i=0,k=0;i<L.length;i+=1152,k++){const b=enc.encodeBuffer(L.subarray(i,i+1152),R.subarray(i,i+1152));if(b.length)out.push(new Uint8Array(b));if(k%300===0){$('#rec').textContent='Saving MP3… '+Math.round(i/L.length*100)+'%';await new Promise(r=>setTimeout(r,0))}}
+  const e=enc.flush();if(e.length)out.push(new Uint8Array(e));return new Blob(out,{type:'audio/mpeg'});
+}
+function stopRec(){
+  if(!rec)return;const r=rec;
+  const finish=async()=>{
+    try{r.node.disconnect();post.disconnect(r.node)}catch(e){}
+    const L=joinI16(r.L),R=joinI16(r.R),d=new Date(),p2=v=>String(v).padStart(2,'0'),base='tiny-noise-'+d.getFullYear()+'-'+p2(d.getMonth()+1)+'-'+p2(d.getDate())+'-'+p2(d.getHours())+p2(d.getMinutes());
+    let blob,ext=r.fmt;
+    if(r.fmt==='mp3'){$('#rec').textContent='Saving MP3…';if(await loadLame()){try{blob=await mp3Blob(L,R,r.sr)}catch(e){blob=null}}if(!blob){msg('MP3 could not be made here (the MP3 encoder loads from the internet), so it was saved as WAV instead.');ext='wav'}}
+    if(!blob)blob=wavBlob(L,R,r.sr);
+    const a=el('a');a.href=URL.createObjectURL(blob);a.download=base+'.'+ext;a.click();
+    if(ext===r.fmt)msg('Saved '+(L.length/r.sr).toFixed(1)+' s as '+ext.toUpperCase()+' ('+(blob.size/1048576).toFixed(1)+' MB).');
+    rec=null;$('#recfmt').disabled=false;recLabel();$('#rec').classList.remove('rec');
+  };
+  if(r.node.port){let done=false;r.flushed=()=>{if(!done){done=true;finish()}};r.node.port.postMessage('flush');setTimeout(()=>r.flushed&&r.flushed(),300)}else finish();
+}
 $('#rec').onclick=async()=>{if(rec){stopRec();return}if(!ctx)await start();startRec()};
 async function playScore(withRec){
   const secs=parseSong();
@@ -1842,34 +1926,34 @@ function initData(){
 
 /* ---------- examples ---------- */
 const EX=[
- {name:'Calibration',lvl:0.55,tip:'Where this started: a quiet, constant bed of tape hiss, two identical short beeps a moment apart (one per side) with the gap slowly drifting like two Bluetooth speakers, and a soft tick.',
+ {name:'Calibration',lvl:0.46,tip:'Where this started: a quiet, constant bed of tape hiss, two identical short beeps a moment apart (one per side) with the gap slowly drifting like two Bluetooth speakers, and a soft tick.',
   g:{bpm:60,master:.6,et:300,ef:.4,em:0,drift:0,dspeed:.3},
   lanes:[{kind:'sample',sampleName:'Field: Tape hiss',timing:'cloud',len:400,travel:1,vol:.28,dark:.6,dense:.65,sscat:.3},
          {kind:'sine',freq:1200,len:40,vol:.4,rate:1,n:4,pat:'3...',pan:-.7,ad:.6},
          {kind:'sine',freq:1200,len:40,vol:.4,rate:1,n:4,pat:'3...',pan:.7,delay:140,wander:70,ad:.6},
          {kind:'click',len:5,vol:.3,rate:2,n:8,pat:'....2...',ad:.5}]},
- {name:'Slow and tight',lvl:4,tip:'52 bpm with a very fine grid: a few short digital clicks placed just off the beat, exact timing, crisp digital character.',
+ {name:'Slow and tight',lvl:4.4,tip:'52 bpm with a very fine grid: a few short digital clicks placed just off the beat, exact timing, crisp digital character.',
   g:{bpm:52,master:.6,et:300,ef:.4,em:0,drift:0,dspeed:.3},
-  lanes:[{kind:'sample',sampleName:'Digital: 1-bit noise',len:9,vol:.4,rate:8,n:32,pat:'3..............................2',att:1,ad:.9},
-         {kind:'sample',sampleName:'Digital: Velvet noise',len:16,vol:.5,rate:5,n:20,pat:'.......3......2.....',att:1,ad:.9},
-         {kind:'white',len:12,vol:.3,rate:4,n:16,pat:'..........1.....',att:1,ad:.8,apat:'>.-'}]},
- {name:'Rain room',lvl:1.8,tip:'Field textures: a slow, dark cloud of rain, paper rustles falling at random moments, and vinyl crackle on a sparse grid.',
+  lanes:[{kind:'sample',sampleName:'Digital: 1-bit noise',len:22,vol:.4,rate:8,n:32,pat:'3..............................2',att:1,ad:.9},
+         {kind:'sample',sampleName:'Digital: Velvet noise',len:36,vol:.5,rate:5,n:20,pat:'.......3......2.....',att:1,ad:.9},
+         {kind:'white',len:28,vol:.3,rate:4,n:16,pat:'..........1.....',att:1,ad:.8,apat:'>.-'}]},
+ {name:'Rain room',lvl:2.2,tip:'Field textures: a slow, dark cloud of rain, paper rustles falling at random moments, and vinyl crackle on a sparse grid.',
   g:{bpm:70,master:.6,et:420,ef:.35,em:.15,drift:.2,dspeed:.2},
   lanes:[{kind:'sample',sampleName:'Field: Rain',timing:'cloud',len:220,travel:.15,vol:.3,dark:.62,sscat:.6},
          {kind:'sample',sampleName:'Field: Paper',timing:'rain',rain:1.2,len:160,vol:.4,sscat:1,pan:.3},
          {kind:'sample',sampleName:'Field: Vinyl',len:300,vol:.45,rate:2,n:8,pat:'3.....1.',sscat:1,dark:.58,ad:.3}]},
- {name:'Data pulse',lvl:2.5,tip:'Slow (58 bpm) but tightly syncopated digital pulses: thin single-sample clicks on a 1/32 grid, a high pure ping in quintuplets, and tiny velvet-noise ticks on a 24-step loop, all landing just off the beat with exact timing.',
+ {name:'Data pulse',lvl:2.36,tip:'Slow (58 bpm) but tightly syncopated digital pulses: thin single-sample clicks on a 1/32 grid, a high pure ping in quintuplets, and tiny velvet-noise ticks on a 24-step loop, all landing just off the beat with exact timing.',
   g:{bpm:58,master:.6,et:300,ef:.4,em:0,drift:0,dspeed:.3},
   lanes:[{kind:'click',len:2,vol:.4,rate:8,n:32,pat:'3......2.....1.....3..........2.',dark:.2,att:1,ad:1,loose:0},
          {kind:'sine',freq:9000,len:8,vol:.18,rate:5,n:20,pat:'...3.......2.....1..',att:1,ad:1,loose:0},
          {kind:'sample',sampleName:'Digital: Velvet noise',len:4,vol:.5,rate:8,n:24,pat:'.....2........3.......1.',apat:'>.-',dark:.2,att:1,ad:1,loose:0}]},
- {name:'Slow evolution',lvl:1,tip:'Patterns that change by themselves: a Turing loop that slowly rewrites, a cellular automaton, a bouncing ball, and running water, with drift on.',
+ {name:'Slow evolution',lvl:1.1,tip:'Patterns that change by themselves: a Turing loop that slowly rewrites, a cellular automaton, a bouncing ball, and running water, with drift on.',
   g:{bpm:66,master:.6,et:380,ef:.45,em:.2,drift:.35,dspeed:.25},
   lanes:[{kind:'sample',sampleName:'Digital: Velvet noise',timing:'turing',tchange:.15,len:20,vol:.45,rate:4,n:16,pat:'3...2...3..1..2.'},
          {kind:'white',timing:'evolve',rule:90,len:10,vol:.3,rate:4,n:16,pat:'.......3........',dark:.6},
          {kind:'brown',timing:'bounce',bh:1.6,bb:.72,brest:1.2,len:120,vol:.5,dark:.6},
          {kind:'sample',sampleName:'Field: Water',timing:'cloud',len:180,travel:.3,vol:.25,dark:.55,sscat:.5}]},
- {name:'Polymeter',lvl:0.75,tip:'Three short loops of 5, 7 and 11 steps that never quite line up, so the syncopation keeps shifting. Watch the squares move against each other.',
+ {name:'Polymeter',lvl:0.82,tip:'Three short loops of 5, 7 and 11 steps that never quite line up, so the syncopation keeps shifting. Watch the squares move against each other.',
   g:{bpm:72,master:.6,et:300,ef:.4,em:0,drift:0,dspeed:.3},
   lanes:[{kind:'sine',freq:1200,len:40,vol:.2,rate:2,n:7,pat:'3..1.2.'},
          {kind:'white',len:15,vol:.35,rate:4,n:11,pat:'..3....1...',apat:'>..'},
@@ -1882,7 +1966,7 @@ const EX=[
   try{const s=localStorage.getItem(AKEY);if(s){const o=JSON.parse(s),w=el('span','tipwrap');w.dataset.tip='Brings back what you were doing the last time this page was open in this browser. Recordings are not part of this (they are only kept in saved project files).';
     const b=el('button',0,'Restore last session'+(o.saved?' ('+new Date(o.saved).toLocaleString([],{dateStyle:'short',timeStyle:'short'})+')':''));b.style.padding='4px 10px';b.style.fontSize='14px';b.style.fontWeight='700';
     b.onclick=async()=>{UNDO.push(JSON.stringify(snapshot()));await openProjectText(s)};w.append(b);row.append(w)}}catch(e){}
-  EX.forEach(e=>{const w=el('span','tipwrap');w.dataset.tip=e.tip;const b=el('button',0,e.name);b.style.padding='4px 10px';b.style.fontSize='14px';
+  EX.forEach(e=>{const w=el('span');const b=el('button',0,e.name);b.style.padding='4px 10px';b.style.fontSize='14px';
     b.onclick=()=>{UNDO.push(JSON.stringify(snapshot()));if(UNDO.length>30)UNDO.shift();loadScene({g:e.g,lanes:e.lanes.map(o=>Object.assign({},o,{vol:Math.min(1.5,(o.vol??.5)*(e.lvl||1))}))});
       G.gDark=G.gRough=G.gDense=G.gAd=0;msg('Loaded "'+e.name+'". '+(ctx&&timer?'':'Press Start to hear it. ')+'Undo (Z) brings back what you had.')};
     w.append(b);row.append(w)});
